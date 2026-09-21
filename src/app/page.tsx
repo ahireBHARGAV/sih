@@ -1,101 +1,101 @@
-import Image from "next/image";
+import { ClosedLoopDiagram } from "@/components/closed-loop-diagram";
+import { TopNav } from "@/components/ui/top-nav";
+import { GlassCard } from "@/components/ui/glass-card";
+import { ArrowRight, GraduationCap, Briefcase, Building2, Library, UserCheck } from "lucide-react";
+import { loginAsRole } from "./actions";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
-export default function Home() {
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = 'force-dynamic';
+
+export default async function LandingPage() {
+  const [studentCount, industryCount, certificateCount] = await Promise.all([
+    prisma.studentProfile.count(),
+    prisma.industryProfile.count(),
+    prisma.certificate.count(),
+  ]);
+
+  const roles = [
+    { title: "Student", roleId: "STUDENT", icon: <GraduationCap className="w-5 h-5" />, desc: "Build a verified skill passport." },
+    { title: "Industry", roleId: "INDUSTRY", icon: <Briefcase className="w-5 h-5" />, desc: "Discover talent & define demand." },
+    { title: "Institution", roleId: "INSTITUTION", icon: <Library className="w-5 h-5" />, desc: "Track placement & faculty." },
+    { title: "Academician", roleId: "ACADEMICIAN", icon: <Building2 className="w-5 h-5" />, desc: "Engage in FDPs & consultancy." },
+    { title: "Mentor", roleId: "MENTOR", icon: <UserCheck className="w-5 h-5" />, desc: "Evaluate student proof-of-work." },
+  ];
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen flex flex-col">
+      <TopNav role="Platform" items={[]} />
+      
+      <main className="flex-1 container mx-auto max-w-7xl px-6 py-24">
+        {/* Hero Section */}
+        <ScrollReveal className="mb-24 flex flex-col md:flex-row gap-16 items-center">
+          <div className="flex-1 space-y-8">
+            <div className="inline-block px-3 py-1 rounded-full bg-white/55 border border-glass-border text-xs font-semibold uppercase tracking-wider text-ink-600">
+              Industry Connect Engine
+            </div>
+            <h1 className="text-5xl md:text-7xl font-display font-bold text-ink-900 leading-[1.1] tracking-tight">
+              Bridge the gap between <span className="text-orange-500">skills</span> and <span className="text-ink-900">demand.</span>
+            </h1>
+            <p className="text-lg md:text-xl text-ink-600 max-w-2xl leading-relaxed">
+              ASCEND is a transparent, verify-first ecosystem. Industry defines the requirements, students build proof-of-work, and mentors validate it—creating a seamless pipeline from campus to career.
+            </p>
+            <div className="flex flex-wrap gap-8 pt-4">
+              <div>
+                <div className="text-4xl font-display font-bold text-ink-900">{studentCount}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-ink-600 mt-1">Students</div>
+              </div>
+              <div className="w-px bg-glass-border"></div>
+              <div>
+                <div className="text-4xl font-display font-bold text-ink-900">{industryCount}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-ink-600 mt-1">Companies</div>
+              </div>
+              <div className="w-px bg-glass-border"></div>
+              <div>
+                <div className="text-4xl font-display font-bold text-ink-900">{certificateCount}</div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-ink-600 mt-1">Certificates Issued</div>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+        {/* Closed Loop Diagram */}
+        <ScrollReveal className="mb-32">
+          <div className="mb-8 flex items-center gap-4">
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-ink-600 border-b border-glass-border pb-2 w-full">
+              The ASCEND Loop
+            </h2>
+          </div>
+          <GlassCard className="p-8">
+            <ClosedLoopDiagram />
+          </GlassCard>
+        </ScrollReveal>
+
+        {/* Role Picker */}
+        <ScrollReveal className="max-w-4xl">
+          <h2 className="text-3xl font-display font-bold text-ink-900 mb-8 tracking-tight">Select a Demo Role</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {roles.map((role) => (
+              <form key={role.roleId} action={loginAsRole.bind(null, role.roleId)} className="block h-full group cursor-pointer">
+                <button type="submit" className="w-full h-full text-left outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-[28px]">
+                  <GlassCard className="h-full flex flex-col p-6 transition-colors hover:bg-white/55">
+                    <div className="p-3 bg-white/55 w-fit rounded-xl mb-4 text-ink-900 group-hover:bg-primary group-hover:text-white transition-colors">
+                      {role.icon}
+                    </div>
+                    <h3 className="text-xl font-display font-semibold text-ink-900 mb-2">{role.title}</h3>
+                    <p className="text-sm text-ink-600 mb-6 flex-1">{role.desc}</p>
+                    
+                    <div className="flex items-center text-sm font-medium text-ink-900 group-hover:text-primary transition-colors">
+                      Continue as {role.title} <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </GlassCard>
+                </button>
+              </form>
+            ))}
+          </div>
+        </ScrollReveal>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

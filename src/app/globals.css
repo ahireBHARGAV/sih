@@ -2,26 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* canvas */
+    --bg-canvas: #0A0A0B;
+    /* near-true black, slightly warm */
+    --bg-canvas-soft: #141414;
+    /* secondary dark surface, e.g. nested panels */
+    --bg-canvas: #F3EEE4;
+    --bg-canvas-soft: #FBF7F0;
+    --bg-neutral: #ECEDF0;
+    --bg-blob-orange: #fff599;
+    --bg-blob-amber: #f9fbcf;
+
+    /* text */
+    --ink-900: #211A14;
+    --ink-600: #6B6055;
+    --text-on-orange: #FBF7F0;
+
+    /* brand */
+    --orange-500: #FFDA1F;
+    --orange-700: #CCA800;
+    --orange-300: #FFE873;
+
+    /* glass surface */
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(255, 218, 31, 0.20);
+    --glass-blur: 20px;
+    --glass-shadow: 0 8px 32px rgba(33, 26, 20, 0.08);
+
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 28px;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-glass-border;
+  }
+
+  body {
+    @apply bg-canvas text-ink-900 antialiased selection:bg-orange-500/30 selection:text-ink-900;
+  }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .glass-panel {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glow-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+    animation: drift 15s infinite alternate ease-in-out;
+  }
+
+  @keyframes drift {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+      transform: translate(5%, 3%) scale(1.05);
+    }
+
+    66% {
+      transform: translate(-3%, 8%) scale(0.95);
+    }
+
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
   }
 }

@@ -1,0 +1,317 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  INDUSTRY
+  ACADEMICIAN
+  INSTITUTION
+  MENTOR
+  ADMIN
+}
+
+enum SkillCategory {
+  TECH
+  AYUSH_ALLIED
+  SOFT_SKILL
+}
+
+enum VerificationState {
+  UNVERIFIED
+  MENTOR_ENDORSED
+  VERIFIED
+  INDUSTRY_VERIFIED
+}
+
+enum IndustrySector {
+  TECH
+  AYUSH_PHARMA
+  AYUSH_WELLNESS
+  RESEARCH
+  OTHER
+}
+
+enum OpportunityType {
+  INTERNSHIP
+  JOB
+  FDP
+  CONSULTANCY
+  RESEARCH
+}
+
+enum ApplicationStage {
+  APPLIED
+  SHORTLISTED
+  SELECTED
+  REJECTED
+  COMPLETED
+}
+
+enum ProblemStatus { 
+  DRAFT 
+  UNDER_VERIFICATION 
+  LIVE 
+  IN_PROGRESS 
+  COMPLETED 
+  CLOSED 
+}
+
+enum PitchStatus {
+  PITCHED
+  REJECTED
+  CONFIRMED
+  DRAFT_WITH_MENTOR
+  SUBMITTED_TO_INDUSTRY
+  SCORED
+  PROOF_ISSUED
+}
+
+enum FlagType { 
+  REVIEWER_PATTERN 
+  USER_REPORT 
+  SLA_BREACH 
+}
+
+enum FlagStatus { 
+  OPEN 
+  RESOLVED 
+}
+
+enum EngagementType {
+  FDP
+  CONSULTANCY
+  RESEARCH
+  TRAINING
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  studentProfile      StudentProfile?
+  industryProfile     IndustryProfile?
+  facultyProfile      FacultyProfile?
+  institutionProfile  InstitutionProfile?
+  mentorProfile       MentorProfile?
+}
+
+model StudentProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  institutionName String
+  interests       String[]
+  targetRole      String?
+  xp              Int      @default(0)
+  level           String   @default("Explorer")
+  employabilityScore Int     @default(0)
+  branch             String?
+  year               Int?
+
+  skills          StudentSkill[]
+  pitches         Pitch[]
+  applications    Application[]
+}
+
+model IndustryProfile {
+  id             String         @id @default(cuid())
+  userId         String         @unique
+  user           User           @relation(fields: [userId], references: [id])
+  companyName    String
+  sector         IndustrySector
+  verified       Boolean        @default(false)
+  gstin          String?
+  domainVerified Boolean        @default(false)
+
+  requirements  IndustryRequirement[]
+  opportunities Opportunity[]
+  problems      Problem[]
+}
+
+model FacultyProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  institutionName String
+  expertiseTags   String[]
+
+  engagements FacultyEngagement[]
+}
+
+model InstitutionProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  name   String
+}
+
+model MentorProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  tier          String   
+  verified      Boolean  @default(false)
+  expertiseTags String[]
+
+  problemsReviewing Problem[]
+  pitchesMentoring  Pitch[]
+}
+
+model Skill {
+  id       String        @id @default(cuid())
+  name     String        @unique
+  category SkillCategory
+
+  studentSkills     StudentSkill[]
+  requirements      IndustryRequirement[]
+  opportunitySkills OpportunitySkill[]
+  problems          Problem[]
+}
+
+model StudentSkill {
+  id               String            @id @default(cuid())
+  studentId        String
+  student          StudentProfile    @relation(fields: [studentId], references: [id])
+  skillId          String
+  skill            Skill             @relation(fields: [skillId], references: [id])
+  state            VerificationState @default(UNVERIFIED)
+  proficiencyScore Int?
+  evidenceRef      String?
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([studentId, skillId])
+}
+
+model IndustryRequirement {
+  id         String          @id @default(cuid())
+  industryId String
+  industry   IndustryProfile @relation(fields: [industryId], references: [id])
+  roleTitle  String
+  skillId    String
+  skill      Skill           @relation(fields: [skillId], references: [id])
+  priority   Int             @default(1)
+}
+
+model Opportunity {
+  id          String            @id @default(cuid())
+  industryId  String
+  industry    IndustryProfile   @relation(fields: [industryId], references: [id])
+  type        OpportunityType
+  title       String
+  description String
+  eligibility String?
+  location    String?
+  workMode    String?
+  status      String            @default("OPEN")
+  createdAt   DateTime          @default(now())
+
+  requiredSkills OpportunitySkill[]
+  applications   Application[]
+}
+
+model OpportunitySkill {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+  skillId       String
+  skill         Skill       @relation(fields: [skillId], references: [id])
+}
+
+model Problem {
+  id                 String        @id @default(cuid())
+  industryId         String
+  industry           IndustryProfile @relation(fields: [industryId], references: [id])
+  title              String
+  problemStatement   String
+  deliverable        String
+  rubric             String
+  reviewerId         String        
+  reviewer           MentorProfile @relation(fields: [reviewerId], references: [id])
+  reviewTurnaroundDays Int
+  status             ProblemStatus @default(DRAFT)
+  adminComments      String?
+  phaseCount         Int           @default(1)   
+  skillId            String
+  skill              Skill         @relation(fields: [skillId], references: [id])
+  createdAt          DateTime      @default(now())
+
+  pitches Pitch[]
+}
+
+model Pitch {
+  id               String      @id @default(cuid())
+  problemId        String
+  problem          Problem     @relation(fields: [problemId], references: [id])
+  studentId        String
+  student          StudentProfile @relation(fields: [studentId], references: [id])
+  pitchText        String
+  matchPercentage  Int         
+  matchReason      String      
+  status           PitchStatus @default(PITCHED)
+  rejectionFeedback String?
+
+  mentorId         String?
+  mentor           MentorProfile? @relation(fields: [mentorId], references: [id])
+  draftContent     String?
+  mentorFeedback   String?
+  mentorApprovedAt DateTime?
+
+  industryScore    Int?
+  industryRemarks  String?
+  scoredAt         DateTime?
+
+  certificate      Certificate?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Certificate {
+  id                       String   @id @default(cuid())
+  pitchId                  String   @unique
+  pitch                    Pitch    @relation(fields: [pitchId], references: [id])
+  studentId                String
+  problemTitle             String   
+  verifyToken              String   @unique @default(cuid())
+  signedHash               String   
+  employabilityScoreAtIssue Int
+  issuedAt                 DateTime @default(now())
+}
+
+model AdminFlag {
+  id              String     @id @default(cuid())
+  type            FlagType
+  relatedProblemId String?
+  relatedPitchId   String?
+  note            String
+  status          FlagStatus @default(OPEN)
+  createdAt       DateTime   @default(now())
+}
+
+model Application {
+  id            String           @id @default(cuid())
+  studentId     String
+  student       StudentProfile   @relation(fields: [studentId], references: [id])
+  opportunityId String
+  opportunity   Opportunity      @relation(fields: [opportunityId], references: [id])
+  stage         ApplicationStage @default(APPLIED)
+  appliedAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model FacultyEngagement {
+  id         String         @id @default(cuid())
+  facultyId  String
+  faculty    FacultyProfile @relation(fields: [facultyId], references: [id])
+  type       EngagementType
+  title      String
+  status     String         @default("OPEN")
+}
