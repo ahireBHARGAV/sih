@@ -14,33 +14,18 @@ const config: Config = {
         foreground: "var(--ink-900)",
         canvas: {
           DEFAULT: "var(--bg-canvas)",
-          soft: "var(--bg-canvas-soft)",
         },
-        ivory: { 
-          DEFAULT: "#F3EEE4", 
-          soft: "#FBF7F0" 
-        },
-        neutral: "#ECEDF0",
         ink: { 
-          900: "#211A14", 
-          600: "#6B6055",
-          400: "#6B6055", // Aliased for any leftover usage
-        },
-        orange: { 
-          300: "#FFE873", 
-          500: "#FFDA1F", 
-          700: "#CCA800" 
+          900: "var(--ink-900)", 
+          600: "var(--ink-600)",
+          400: "var(--ink-400)", 
         },
         primary: {
-          DEFAULT: "var(--orange-500)",
-          hover: "var(--orange-700)",
+          DEFAULT: "var(--primary)",
+          hover: "var(--primary-hover)",
         },
-        teal: "var(--orange-500)", // Aliased to not break old code immediately
-        gold: "var(--orange-300)", // Aliased
-        blob: {
-          orange: "var(--bg-blob-orange)",
-          amber: "var(--bg-blob-amber)",
-        },
+        teal: "var(--primary)", // Aliased to not break old code immediately
+        gold: "var(--primary)", // Aliased
         glass: {
           bg: "var(--glass-bg)",
           border: "var(--glass-border)",
@@ -48,16 +33,16 @@ const config: Config = {
       },
       borderRadius: {
         sm: "var(--radius-sm)",
-        md: "var(--radius-md)",
+        DEFAULT: "var(--radius-default)",
         lg: "var(--radius-lg)",
-        pill: "var(--radius-pill)",
+        pill: "9999px",
       },
       fontFamily: {
-        display: ["var(--font-sora)", "sans-serif"],
+        display: ["var(--font-jakarta)", "sans-serif"],
         sans: ["var(--font-inter)", "sans-serif"],
       },
       boxShadow: {
-        glass: "var(--glass-shadow)",
+        soft: "var(--shadow-soft)",
       },
     },
   },

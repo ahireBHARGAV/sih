@@ -37,9 +37,12 @@ export default async function PitchSandboxPage({ params }: { params: { id: strin
       <TopNav role="Student" items={[
         { label: "Dashboard", href: "/student" },
         { label: "Assessment", href: "/student/assessment" },
-        { label: "Skill Card", href: "/student/passport" },
+        { label: "Skill Passport", href: "/student/passport" },
         { label: "Roadmap", href: "/student/roadmap" },
-        { label: "Problems", href: "/student/problems" },
+        { label: "Problem Statements", href: "/student/problems" },
+        { label: "Opportunities", href: "/student/opportunities" },
+        { label: "Applications", href: "/student/applications" },
+        { label: "Academics", href: "/student/academics" },
       ]} />
       
       <main className="flex-1 container mx-auto max-w-5xl px-6 py-12">

@@ -45,7 +45,10 @@ export default function AssessmentPage() {
         { label: "Assessment", href: "/student/assessment", isActive: true },
         { label: "Skill Passport", href: "/student/passport" },
         { label: "Roadmap", href: "/student/roadmap" },
-        { label: "Challenges", href: "/student/challenges" },
+        { label: "Problem Statements", href: "/student/problems" },
+        { label: "Opportunities", href: "/student/opportunities" },
+        { label: "Applications", href: "/student/applications" },
+        { label: "Academics", href: "/student/academics" },
       ]} />
       
       <main className="flex-1 container mx-auto max-w-3xl px-6 py-12">

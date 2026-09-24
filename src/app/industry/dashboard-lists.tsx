@@ -47,7 +47,7 @@ export function DashboardLists({ problems, opportunities }: { problems: Dashboar
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div>
-        <h2 className="text-xl font-display font-bold text-ink-900 mb-4">Manage Problems</h2>
+        <h2 className="text-xl font-display font-bold text-ink-900 mb-4">Manage Problem Statements</h2>
         <div className="flex flex-col gap-4">
           {problems.map((p) => (
             <GlassCard key={p.id} className="p-4 flex justify-between items-center">
@@ -65,7 +65,7 @@ export function DashboardLists({ problems, opportunities }: { problems: Dashboar
               </div>
             </GlassCard>
           ))}
-          {problems.length === 0 && <p className="text-ink-600 text-sm">No problems posted yet.</p>}
+          {problems.length === 0 && <p className="text-ink-600 text-sm">No problem statements posted yet.</p>}
         </div>
       </div>
 

@@ -44,7 +44,8 @@ export default async function IndustryDashboard() {
       <TopNav role="Industry" items={[
         { label: "Dashboard", href: "/industry", isActive: true },
         { label: "Hiring", href: "/industry/hiring" },
-        { label: "Pipeline", href: "/industry/pipeline" }
+        { label: "Pipeline", href: "/industry/pipeline" },
+        { label: "Academics", href: "/industry/academics" }
       ]} />
       
       <main className="flex-1 container mx-auto max-w-6xl px-6 py-12">
@@ -73,7 +74,7 @@ export default async function IndustryDashboard() {
           </GlassCard>
 
           <GlassCard className="flex flex-col gap-2">
-            <span className="text-ink-600 text-sm font-semibold uppercase tracking-wider">Active Problems</span>
+            <span className="text-ink-600 text-sm font-semibold uppercase tracking-wider">Active Problem Statements</span>
             <div className="flex items-end gap-3">
               <h2 className="text-4xl font-display font-bold text-ink-900">{activeProblems}</h2>
               <span className="text-ink-400 font-medium mb-1">posted</span>

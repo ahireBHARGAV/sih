@@ -10,6 +10,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    const validSkillIds: string[] = [];
+    for (const skillId of skillIds) {
+      if (skillId.startsWith("custom-")) {
+        const skillName = skillId.replace("custom-", "");
+        let skill = await prisma.skill.findUnique({ where: { name: skillName } });
+        if (!skill) {
+          skill = await prisma.skill.create({ data: { name: skillName, category: "TECH" } });
+        }
+        validSkillIds.push(skill.id);
+      } else {
+        validSkillIds.push(skillId);
+      }
+    }
+
     const opportunity = await prisma.opportunity.create({
       data: {
         industryId,
@@ -18,8 +32,8 @@ export async function POST(request: Request) {
         location: location || "",
         description: description || "",
         requiredSkills: {
-          create: skillIds.map((skillId: string) => ({
-            skillId,
+          create: validSkillIds.map((id: string) => ({
+            skillId: id,
           }))
         }
       },

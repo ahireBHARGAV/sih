@@ -5,80 +5,51 @@
 @layer base {
   :root {
     /* canvas */
-    --bg-canvas: #0A0A0B;
-    /* near-true black, slightly warm */
-    --bg-canvas-soft: #141414;
-    /* secondary dark surface, e.g. nested panels */
-    --bg-canvas: #F3EEE4;
-    --bg-canvas-soft: #FBF7F0;
-    --bg-neutral: #ECEDF0;
-    --bg-blob-orange: #fff599;
-    --bg-blob-amber: #f9fbcf;
+    --bg-canvas: #F7F7F5;
 
     /* text */
-    --ink-900: #211A14;
-    --ink-600: #6B6055;
-    --text-on-orange: #FBF7F0;
-
+    --ink-900: #111111;
+    --ink-600: #666666; /* secondary body text */
+    --ink-400: #E6E6E2; /* outline color */
+    
     /* brand */
-    --orange-500: #FFDA1F;
-    --orange-700: #CCA800;
-    --orange-300: #FFE873;
+    --primary: #FF6B00;
+    --primary-hover: #e56000;
 
-    /* glass surface */
-    --glass-bg: rgba(255, 255, 255, 0.55);
-    --glass-border: rgba(255, 218, 31, 0.20);
-    --glass-blur: 20px;
-    --glass-shadow: 0 8px 32px rgba(33, 26, 20, 0.08);
+    /* glass surface (lite) */
+    --glass-bg: rgba(250, 250, 248, 0.90);
+    --glass-border: #E6E6E2;
+    --glass-blur: 10px;
 
-    --radius-sm: 12px;
-    --radius-md: 20px;
-    --radius-lg: 28px;
+    /* subtle shadow */
+    --shadow-soft: 0px 10px 40px rgba(0,0,0,0.04);
+
+    --radius-sm: 8px;
+    --radius-default: 8px;
+    --radius-lg: 16px;
   }
 }
 
 @layer base {
   * {
-    @apply border-glass-border;
+    border-color: #E6E6E2;
   }
 
   body {
-    @apply bg-canvas text-ink-900 antialiased selection:bg-orange-500/30 selection:text-ink-900;
+    @apply bg-canvas text-ink-900 antialiased;
+  }
+
+  ::selection {
+    background-color: rgba(255, 122, 26, 0.3);
+    color: var(--ink-900);
   }
 }
 
 @layer utilities {
   .glass-panel {
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
-    box-shadow: var(--glass-shadow);
-  }
-
-  .glow-blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: -1;
-    animation: drift 15s infinite alternate ease-in-out;
-  }
-
-  @keyframes drift {
-    0% {
-      transform: translate(0, 0) scale(1);
-    }
-
-    33% {
-      transform: translate(5%, 3%) scale(1.05);
-    }
-
-    66% {
-      transform: translate(-3%, 8%) scale(0.95);
-    }
-
-    100% {
-      transform: translate(0, 0) scale(1);
-    }
   }
 }

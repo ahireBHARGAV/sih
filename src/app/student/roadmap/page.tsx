@@ -24,28 +24,16 @@ export default async function RoadmapPage() {
 
   if (!student) redirect("/");
 
-  const targetRole = student.targetRole || "Frontend Developer Intern";
-
-  // Fetch requirements
-  const requirements = await prisma.industryRequirement.findMany({
-    where: { roleTitle: { contains: targetRole, mode: 'insensitive' } },
-    include: { skill: true }
-  });
-
-  const requiredSkillsMap = new Map();
-  for (const req of requirements) {
-    if (!requiredSkillsMap.has(req.skillId)) {
-      requiredSkillsMap.set(req.skillId, req.skill);
+  // Calculate progress for each skill
+  const getProgress = (state: string) => {
+    switch(state) {
+      case 'UNVERIFIED': return { percent: 33, label: "Mentioned", next: "Solve Industry Problem", action: "Find Problem Statements" };
+      case 'MENTOR_ENDORSED': return { percent: 66, label: "Mentor Endorsed", next: "Awaiting Industry Verification", action: null };
+      case 'VERIFIED': 
+      case 'INDUSTRY_VERIFIED': return { percent: 100, label: "Verified", next: "Skill fully verified!", action: null };
+      default: return { percent: 0, label: "Unknown", next: "", action: null };
     }
-  }
-  const requiredSkillIds = Array.from(requiredSkillsMap.keys());
-
-  const matchResult = computeMatch(
-    requiredSkillIds,
-    student.skills.map(s => ({ skillId: s.skillId, state: s.state }))
-  );
-
-  const missingSkills = matchResult.missing.map(id => requiredSkillsMap.get(id));
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -54,48 +42,59 @@ export default async function RoadmapPage() {
         { label: "Assessment", href: "/student/assessment" },
         { label: "Skill Passport", href: "/student/passport" },
         { label: "Roadmap", href: "/student/roadmap", isActive: true },
-        { label: "Challenges", href: "/student/challenges" },
+        { label: "Problem Statements", href: "/student/problems" },
+        { label: "Opportunities", href: "/student/opportunities" },
+        { label: "Applications", href: "/student/applications" },
+        { label: "Academics", href: "/student/academics" },
       ]} />
       
       <main className="flex-1 container mx-auto max-w-4xl px-6 py-12">
-        <h1 className="text-3xl font-display font-bold text-ink-900 mb-2">Learning Roadmap</h1>
+        <h1 className="text-3xl font-display font-bold text-ink-900 mb-2">Verification Roadmap</h1>
         <p className="text-ink-600 mb-8">
-          Based on industry demand for <span className="font-semibold">{targetRole}</span>, here is your path to verification.
+          Track your progress towards achieving 100% verification for all the skills in your passport.
         </p>
         
         <div className="grid gap-6">
-          <GlassCard className="flex justify-between items-center bg-white/40">
-            <div>
-              <h2 className="text-xl font-display font-semibold text-ink-900">Readiness Score</h2>
-              <p className="text-sm text-ink-600">{matchResult.verified} of {matchResult.requiredCount} required skills verified.</p>
-            </div>
-            <div className="text-4xl font-display font-bold text-primary">
-              {matchResult.percentage}%
-            </div>
-          </GlassCard>
-
-          {missingSkills.length === 0 ? (
+          {student.skills.length === 0 ? (
             <GlassCard>
-              <h2 className="text-xl font-display font-semibold text-teal mb-2">You are ready!</h2>
-              <p className="text-ink-600">You have verified all the critical skills for your target role. Check out your matching opportunities.</p>
+              <h2 className="text-xl font-display font-semibold text-ink-900 mb-2">No skills added yet</h2>
+              <p className="text-ink-600 mb-4">Go to your Skill Passport to add your first mentioned skill.</p>
+              <Link href="/student/passport">
+                <Button>Go to Skill Passport</Button>
+              </Link>
             </GlassCard>
           ) : (
-            <div>
-              <h3 className="text-lg font-display font-semibold text-ink-900 mb-4 mt-8">Missing Skills to Acquire</h3>
-              <div className="grid gap-4">
-                {missingSkills.map((skill: { id: string, name: string }) => (
-                  <GlassCard key={skill.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            student.skills.map((s) => {
+              const progress = getProgress(s.state);
+              return (
+                <GlassCard key={s.id} className="flex flex-col gap-4">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-display font-bold text-ink-900">{s.skill.name}</h2>
+                    <span className="font-semibold text-primary">{progress.percent}% Verified</span>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full bg-zinc-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-primary h-2.5 rounded-full transition-all duration-500" 
+                      style={{ width: `${progress.percent}%` }}
+                    ></div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-2 gap-4">
                     <div>
-                      <h4 className="font-semibold text-ink-900">{skill.name}</h4>
-                      <p className="text-sm text-ink-600">Recommended action: Complete a challenge to verify this skill.</p>
+                      <p className="text-sm font-semibold text-ink-900">Current Status: <span className="font-normal text-ink-600">{progress.label}</span></p>
+                      <p className="text-sm font-semibold text-ink-900">Next Step: <span className="font-normal text-ink-600">{progress.next}</span></p>
                     </div>
-                    <Link href={`/student/challenges?skillId=${skill.id}`}>
-                      <Button variant="secondary" size="sm">Find Challenges</Button>
-                    </Link>
-                  </GlassCard>
-                ))}
-              </div>
-            </div>
+                    {progress.action && (
+                      <Link href={`/student/problems?skillId=${s.skillId}`}>
+                        <Button variant="secondary" size="sm">{progress.action}</Button>
+                      </Link>
+                    )}
+                  </div>
+                </GlassCard>
+              );
+            })
           )}
         </div>
       </main>

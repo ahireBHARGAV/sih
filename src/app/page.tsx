@@ -27,11 +27,11 @@ export default async function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <TopNav role="Platform" items={[]} />
-      
+
       <main className="flex-1 container mx-auto max-w-7xl px-6 py-24">
         {/* Hero Section */}
-        <ScrollReveal className="mb-24 flex flex-col md:flex-row gap-16 items-center">
-          <div className="flex-1 space-y-8">
+        <ScrollReveal className="relative mb-24 flex flex-col md:flex-row gap-16 items-center">
+          <div className="flex-1 space-y-8 z-10">
             <div className="inline-block px-3 py-1 rounded-full bg-white/55 border border-glass-border text-xs font-semibold uppercase tracking-wider text-ink-600">
               Industry Connect Engine
             </div>
@@ -85,7 +85,7 @@ export default async function LandingPage() {
                     </div>
                     <h3 className="text-xl font-display font-semibold text-ink-900 mb-2">{role.title}</h3>
                     <p className="text-sm text-ink-600 mb-6 flex-1">{role.desc}</p>
-                    
+
                     <div className="flex items-center text-sm font-medium text-ink-900 group-hover:text-primary transition-colors">
                       Continue as {role.title} <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </div>

@@ -9,7 +9,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-[28px] border border-orange-500/20 bg-white/55 backdrop-blur-xl shadow-[0_8px_32px_rgba(33,26,20,0.08)] p-6 text-[#211A14]",
+          "rounded-2xl border border-[#E6E6E2] bg-white p-6 text-ink-900",
           className
         )}
         {...props}

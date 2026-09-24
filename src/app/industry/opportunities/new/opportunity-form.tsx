@@ -14,7 +14,18 @@ export function OpportunityForm({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  
+  const [customSkills, setCustomSkills] = useState<{id: string, name: string}[]>([]);
+  const [showOtherInput, setShowOtherInput] = useState(false);
+  const [otherSkillName, setOtherSkillName] = useState("");
+
+  const handleAddOther = () => {
+    if (!otherSkillName.trim()) return;
+    const newId = `custom-${otherSkillName.trim()}`;
+    setCustomSkills([...customSkills, { id: newId, name: otherSkillName.trim() }]);
+    setSelectedSkills([...selectedSkills, newId]);
+    setOtherSkillName("");
+    setShowOtherInput(false);
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -105,7 +116,7 @@ export function OpportunityForm({
       <div>
         <label className="block text-sm font-semibold text-ink-900 mb-4">Required Skills</label>
         <div className="flex flex-wrap gap-2">
-          {availableSkills.map(skill => (
+          {[...availableSkills, ...customSkills].map(skill => (
             <button
               key={skill.id}
               type="button"
@@ -119,6 +130,30 @@ export function OpportunityForm({
               {skill.name}
             </button>
           ))}
+          
+          {!showOtherInput ? (
+            <button
+              type="button"
+              onClick={() => setShowOtherInput(true)}
+              className="px-3 py-1.5 rounded-full text-sm font-medium border border-dashed border-ink-400 text-ink-600 hover:bg-white/60 transition-colors"
+            >
+              + Other
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={otherSkillName}
+                onChange={(e) => setOtherSkillName(e.target.value)}
+                placeholder="Skill name..."
+                className="h-8 px-3 rounded-full border border-glass-border bg-white text-sm focus:outline-none"
+                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddOther())}
+                autoFocus
+              />
+              <button type="button" onClick={handleAddOther} className="px-3 py-1 bg-ink-900 text-white rounded-full text-sm">Add</button>
+              <button type="button" onClick={() => setShowOtherInput(false)} className="px-3 py-1 bg-white text-ink-900 border border-glass-border rounded-full text-sm">Cancel</button>
+            </div>
+          )}
         </div>
       </div>
 

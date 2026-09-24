@@ -51,9 +51,13 @@ export default async function StudentOpportunitiesPage() {
     <div className="min-h-screen flex flex-col">
       <TopNav role="Student" items={[
         { label: "Dashboard", href: "/student" },
+        { label: "Assessment", href: "/student/assessment" },
         { label: "Skill Passport", href: "/student/passport" },
         { label: "Roadmap", href: "/student/roadmap" },
-        { label: "Opportunities", href: "/student/opportunities", isActive: true }
+        { label: "Problem Statements", href: "/student/problems" },
+        { label: "Opportunities", href: "/student/opportunities", isActive: true },
+        { label: "Applications", href: "/student/applications" },
+        { label: "Academics", href: "/student/academics" },
       ]} />
       
       <main className="flex-1 container mx-auto max-w-5xl px-6 py-12">

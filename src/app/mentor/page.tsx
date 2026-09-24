@@ -13,7 +13,11 @@ export default async function MentorDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <TopNav role="Mentor" items={[]} />
+      <TopNav role="Mentor" items={[
+        { label: "Dashboard", href: "/mentor", isActive: true },
+        { label: "Sandbox", href: "/mentor/sandbox" },
+        { label: "Academics", href: "/mentor/academics" }
+      ]} />
       
       <main className="flex-1 container mx-auto max-w-[1440px] px-6 py-12">
         <h1 className="text-3xl font-display font-bold text-ink-900 mb-8">Mentor Queue</h1>

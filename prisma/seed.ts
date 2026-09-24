@@ -53,11 +53,11 @@ async function main() {
   // 2. Create Users & Profiles
   // Students
   const studentsData = [
-    { name: 'Alice Smith', email: 'alice@student.com', role: UserRole.STUDENT, institutionName: 'Tech University', xp: 450, level: 'Apprentice', skills: ['React', 'TypeScript', 'Node.js', 'Communication'] },
-    { name: 'Bob Johnson', email: 'bob@student.com', role: UserRole.STUDENT, institutionName: 'Global Institute', xp: 820, level: 'Practitioner', skills: ['Python', 'Machine Learning', 'Data Analysis'] },
-    { name: 'Charlie Davis', email: 'charlie@student.com', role: UserRole.STUDENT, institutionName: 'Ayush College', xp: 300, level: 'Explorer', skills: ['Ayurveda Basics', 'Yoga Therapy'] },
-    { name: 'Diana Prince', email: 'diana@student.com', role: UserRole.STUDENT, institutionName: 'Design School', xp: 950, level: 'Expert', skills: ['Figma', 'UI/UX Design', 'React'] },
-    { name: 'Evan Wright', email: 'evan@student.com', role: UserRole.STUDENT, institutionName: 'Tech University', xp: 120, level: 'Explorer', skills: ['Java', 'Spring Boot'] },
+    { name: 'Ananya Sharma', email: 'ananya@student.com', role: UserRole.STUDENT, institutionName: 'IIT Bombay', xp: 450, level: 'Apprentice', targetRole: 'Frontend Developer', skills: ['React', 'TypeScript', 'Communication'] },
+    { name: 'Rahul Patel', email: 'rahul@student.com', role: UserRole.STUDENT, institutionName: 'BITS Pilani', xp: 820, level: 'Practitioner', skills: ['Python', 'Machine Learning', 'Data Analysis'] },
+    { name: 'Vikram Singh', email: 'vikram@student.com', role: UserRole.STUDENT, institutionName: 'AIIA New Delhi', xp: 300, level: 'Explorer', skills: ['Ayurveda Basics', 'Yoga Therapy'] },
+    { name: 'Priya Gupta', email: 'priya@student.com', role: UserRole.STUDENT, institutionName: 'NID Ahmedabad', xp: 950, level: 'Expert', skills: ['Figma', 'UI/UX Design', 'React'] },
+    { name: 'Rohan Verma', email: 'rohan@student.com', role: UserRole.STUDENT, institutionName: 'IIT Delhi', xp: 120, level: 'Explorer', skills: ['Java', 'Spring Boot'] },
   ]
 
   for (const s of studentsData) {
@@ -123,7 +123,7 @@ async function main() {
   // Mentor
   const mentorUser = await prisma.user.create({
     data: {
-      name: 'Dr. Alan Turing', email: 'alan@mentor.com', role: UserRole.MENTOR,
+      name: 'Dr. Rajesh Kumar', email: 'rajesh@mentor.com', role: UserRole.MENTOR,
       mentorProfile: {
         create: {
           tier: 'Expert',
@@ -135,18 +135,17 @@ async function main() {
     include: { mentorProfile: true }
   });
 
-  // Academician, Institution
   await prisma.user.create({
     data: {
-      name: 'Prof. Marie Curie', email: 'marie@academic.com', role: UserRole.ACADEMICIAN,
-      facultyProfile: { create: { institutionName: 'Science Institute', expertiseTags: ['Research', 'Physics'] } }
+      name: 'Prof. Anjali Desai', email: 'anjali@academic.com', role: UserRole.ACADEMICIAN,
+      facultyProfile: { create: { institutionName: 'IISc Bangalore', expertiseTags: ['Research', 'Physics'] } }
     }
   })
 
   await prisma.user.create({
     data: {
-      name: 'Tech University Admin', email: 'admin@techuniversity.edu', role: UserRole.INSTITUTION,
-      institutionProfile: { create: { name: 'Tech University' } }
+      name: 'IIT Bombay Admin', email: 'admin@iitb.ac.in', role: UserRole.INSTITUTION,
+      institutionProfile: { create: { name: 'IIT Bombay' } }
     }
   })
 
@@ -156,8 +155,17 @@ async function main() {
   const himalaya = industryProfiles.find(p => p.companyName === 'Himalaya Wellness Group')!
   const aiia = industryProfiles.find(p => p.companyName === 'AIIA Research Cell')!
 
-  // Opportunities
-  await prisma.opportunity.create({
+  // Opportunities & Requirements
+  await prisma.industryRequirement.createMany({
+    data: [
+      { industryId: techNova.id, roleTitle: 'Frontend Developer', skillId: getSkill('React').id, priority: 1 },
+      { industryId: techNova.id, roleTitle: 'Frontend Developer', skillId: getSkill('Next.js').id, priority: 2 },
+      { industryId: techNova.id, roleTitle: 'Frontend Developer', skillId: getSkill('TypeScript').id, priority: 1 },
+      { industryId: techNova.id, roleTitle: 'Frontend Developer', skillId: getSkill('REST APIs').id, priority: 3 },
+    ]
+  });
+
+  const opp1 = await prisma.opportunity.create({
     data: {
       industryId: techNova.id, title: 'Frontend Developer Intern', type: OpportunityType.INTERNSHIP,
       description: 'Join our team to build scalable UIs using React and Next.js.', location: 'Remote', workMode: 'Hybrid',
@@ -207,14 +215,14 @@ async function main() {
   })
 
   // Pitches
-  const evan = await prisma.studentProfile.findFirst({ where: { user: { name: 'Evan Wright' } } })
-  const diana = await prisma.studentProfile.findFirst({ where: { user: { name: 'Diana Prince' } } })
-  const alice = await prisma.studentProfile.findFirst({ where: { user: { name: 'Alice Smith' } } })
+  const evan = await prisma.studentProfile.findFirst({ where: { user: { name: 'Rohan Verma' } } })
+  const diana = await prisma.studentProfile.findFirst({ where: { user: { name: 'Priya Gupta' } } })
+  const alice = await prisma.studentProfile.findFirst({ where: { user: { name: 'Ananya Sharma' } } })
 
-  // 1. PITCHED
+  // 1. PITCHED (Ananya active pitch)
   await prisma.pitch.create({
     data: {
-      problemId: prob1.id, studentId: evan!.id,
+      problemId: prob1.id, studentId: alice!.id,
       pitchText: 'I have experience building REST APIs with Spring Boot. I can deliver this.',
       matchPercentage: 85, matchReason: 'Strong match on REST APIs.',
       status: 'PITCHED'
@@ -234,11 +242,20 @@ async function main() {
   // 3. SCORED
   const pitch3 = await prisma.pitch.create({
     data: {
-      problemId: prob3.id, studentId: alice!.id,
+      problemId: prob3.id, studentId: evan!.id,
       pitchText: 'I have a background in literature review. Here is my draft.',
       draftContent: 'Literature Review: Panchakarma Outcomes\n\nAbstract:\nPanchakarma is an Ayurvedic treatment...',
       matchPercentage: 95, matchReason: 'Expert in biostatistics.',
       status: 'SCORED', mentorId: mentorUser.mentorProfile!.id, industryScore: 92, industryRemarks: 'Excellent comprehensive review.'
+    }
+  })
+
+  // Applications
+  await prisma.application.create({
+    data: {
+      studentId: alice!.id,
+      opportunityId: opp1.id,
+      stage: 'SHORTLISTED'
     }
   })
 

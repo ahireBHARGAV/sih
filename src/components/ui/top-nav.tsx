@@ -17,7 +17,7 @@ interface TopNavProps {
 
 export function TopNav({ role, items, className }: TopNavProps) {
   return (
-    <header className={cn("sticky top-0 z-50 w-full border-b border-glass-border bg-glass-bg backdrop-blur-[20px]", className)}>
+    <header className={cn("sticky top-0 z-50 w-full border-b border-[#E6E6E2] bg-[#FAFAF8]/90 backdrop-blur-[10px]", className)}>
       <div className="mx-auto max-w-[1440px] px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <Link href="/">
@@ -33,8 +33,8 @@ export function TopNav({ role, items, className }: TopNavProps) {
               className={cn(
                 "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors",
                 item.isActive
-                  ? "bg-primary text-white"
-                  : "text-ink-600 hover:bg-white/55 hover:text-ink-900"
+                  ? "bg-ink-900 text-white"
+                  : "text-ink-600 hover:bg-zinc-100 hover:text-ink-900"
               )}
             >
               {item.icon && <span className="shrink-0">{item.icon}</span>}
