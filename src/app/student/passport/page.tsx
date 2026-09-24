@@ -1,11 +1,8 @@
 import { TopNav } from "@/components/ui/top-nav";
 import { GlassCard } from "@/components/ui/glass-card";
-import { Badge } from "@/components/ui/badge";
 import { getSession } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { VerificationState } from "@prisma/client";
-import Link from "next/link";
 import { MetallicSkillCard } from "@/components/ui/metallic-skill-card";
 import { SkillRoadmapCard } from "@/components/ui/skill-roadmap-card";
 import { addMentionedSkill } from "../actions";
@@ -58,15 +55,7 @@ export default async function PassportPage() {
     }
   });
 
-  const getBadgeVariant = (state: VerificationState) => {
-    switch (state) {
-      case "UNVERIFIED": return "unverified";
-      case "MENTOR_ENDORSED": return "mentorEndorsed";
-      case "VERIFIED": return "verified";
-      case "INDUSTRY_VERIFIED": return "industryVerified";
-      default: return "default";
-    }
-  };
+
 
   return (
     <div className="min-h-screen flex flex-col">
