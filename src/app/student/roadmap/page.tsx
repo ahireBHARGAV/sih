@@ -3,7 +3,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { getSession } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { computeMatch } from "@/lib/gap-analysis";
+import { getSession } from "@/app/actions";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
