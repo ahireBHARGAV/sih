@@ -11,7 +11,7 @@ type ApplicationData = {
   stage: ApplicationStage;
   student: {
     user: { name: string };
-    institutionName: string;
+    institution: { name: string } | null;
     level: string;
   };
   opportunity: { title: string };
@@ -64,7 +64,7 @@ export function PipelineKanban({ initialApplications }: { initialApplications: A
                 columnApps.map(app => (
                   <GlassCard key={app.id} className={`p-4 ${loadingId === app.id ? 'opacity-50' : ''}`}>
                     <h4 className="font-semibold text-ink-900 mb-1">{app.student.user.name}</h4>
-                    <p className="text-xs text-ink-600 mb-2">{app.student.institutionName} • Level {app.student.level}</p>
+                    <p className="text-xs text-ink-600 mb-2">{app.student.institution?.name} • Level {app.student.level}</p>
                     <p className="text-sm font-medium text-ink-900 mb-4">{app.opportunity.title}</p>
                     
                     <select

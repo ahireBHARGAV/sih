@@ -24,7 +24,10 @@ export default async function PassportPage() {
         orderBy: { updatedAt: 'desc' }
       },
       pitches: {
-        include: { problem: { include: { industry: true } } }
+        include: { 
+          problem: { include: { industry: true } },
+          mentor: { include: { user: true } }
+        }
       }
     }
   });
@@ -100,7 +103,7 @@ export default async function PassportPage() {
                   {skills.map(s => (
                     <SkillRoadmapCard 
                       key={s.id}
-                      skill={{ id: s.skill.id, name: s.skill.name, state: s.state }}
+                      skill={{ id: s.skill.id, name: s.skill.name, state: s.state, evidenceRef: s.evidenceRef || undefined }}
                       pitches={student.pitches}
                     />
                   ))}

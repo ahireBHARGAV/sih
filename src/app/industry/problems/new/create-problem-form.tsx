@@ -10,10 +10,21 @@ export function CreateProblemForm({
   mentors 
 }: { 
   skills: { id: string, name: string }[],
-  mentors: { id: string, user: { name: string }, tier: string }[]
+  mentors: { id: string, user: { name: string }, tier: string, expertiseTags: string[], activeMenteeCount: number, maxActiveMentees: number }[]
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedSkillId, setSelectedSkillId] = useState("");
+
+  const selectedSkillName = skills.find(s => s.id === selectedSkillId)?.name;
+  const sortedMentors = [...mentors].sort((a, b) => {
+    const aMatch = selectedSkillName && a.expertiseTags.includes(selectedSkillName) ? 1 : 0;
+    const bMatch = selectedSkillName && b.expertiseTags.includes(selectedSkillName) ? 1 : 0;
+    if (aMatch !== bMatch) {
+      return bMatch - aMatch;
+    }
+    return a.activeMenteeCount - b.activeMenteeCount;
+  });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,6 +74,8 @@ export function CreateProblemForm({
           name="skillId" 
           required 
           className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-ink-900"
+          value={selectedSkillId}
+          onChange={(e) => setSelectedSkillId(e.target.value)}
         >
           <option value="">Select a skill</option>
           {skills.map(skill => (
@@ -107,9 +120,15 @@ export function CreateProblemForm({
             className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-ink-900"
           >
             <option value="">Select a mentor</option>
-            {mentors.map(mentor => (
-              <option key={mentor.id} value={mentor.id}>{mentor.user.name} ({mentor.tier})</option>
-            ))}
+            {sortedMentors.map(mentor => {
+              const isMatch = selectedSkillName && mentor.expertiseTags.includes(selectedSkillName);
+              const atCapacity = mentor.activeMenteeCount >= mentor.maxActiveMentees;
+              return (
+                <option key={mentor.id} value={mentor.id}>
+                  {isMatch ? "⭐ " : ""}{mentor.user.name} ({mentor.tier}) {atCapacity ? " - ⚠️ At capacity" : ` - Load: ${mentor.activeMenteeCount}/${mentor.maxActiveMentees}`}
+                </option>
+              );
+            })}
           </select>
         </div>
         <div className="w-48">

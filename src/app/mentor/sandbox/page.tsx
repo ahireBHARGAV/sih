@@ -5,6 +5,9 @@ import { getSession } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { MentorReviewForm } from "./mentor-review-form";
+import { MentorMessageThread } from "@/components/mentor-message-thread";
+import { getActiveMenteeCount } from "@/lib/mentor-load";
+import { ToggleAvailabilityButton } from "./toggle-availability-button";
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +23,8 @@ export default async function MentorSandboxPage() {
 
   if (!mentor) redirect("/");
 
+  const activeMenteeCount = await getActiveMenteeCount(mentor.id);
+
   // Fetch pitches assigned to this mentor that need review (DRAFT_WITH_MENTOR)
   const pendingPitches = await prisma.pitch.findMany({
     where: { 
@@ -28,7 +33,8 @@ export default async function MentorSandboxPage() {
     },
     include: {
       problem: { include: { industry: true } },
-      student: { include: { user: true } }
+      student: { include: { user: true } },
+      messages: { orderBy: { createdAt: 'asc' } }
     },
     orderBy: { updatedAt: 'desc' }
   });
@@ -55,8 +61,18 @@ export default async function MentorSandboxPage() {
       ]} />
       
       <main className="flex-1 container mx-auto max-w-6xl px-6 py-12">
-        <h1 className="text-3xl font-display font-bold text-ink-900 mb-2">Mentor Sandbox</h1>
-        <p className="text-ink-600 mb-8">Review student drafts. Only mentor-approved work reaches the industry.</p>
+        <div className="flex justify-between items-end mb-8">
+          <div>
+            <h1 className="text-3xl font-display font-bold text-ink-900 mb-2">Mentor Sandbox</h1>
+            <p className="text-ink-600">Review student drafts. Only mentor-approved work reaches the industry.</p>
+          </div>
+          <div className="text-right flex flex-col items-end gap-2">
+            <ToggleAvailabilityButton initialAvailable={mentor.available} />
+            <Badge variant={activeMenteeCount >= mentor.maxActiveMentees ? "destructive" : "secondary"}>
+              Load: {activeMenteeCount} / {mentor.maxActiveMentees} Mentees
+            </Badge>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
@@ -75,10 +91,19 @@ export default async function MentorSandboxPage() {
 
                 <div className="text-sm text-ink-900 bg-white/40 p-3 rounded-md border border-glass-border">
                   <span className="font-semibold block mb-1">Current Draft:</span>
-                  <pre className="text-sm text-ink-700 whitespace-pre-wrap font-mono">{pitch.draftContent}</pre>
+                  <pre className="text-sm text-ink-700 whitespace-pre-wrap font-mono max-h-48 overflow-y-auto">{pitch.draftContent}</pre>
                 </div>
                 
-                <MentorReviewForm pitchId={pitch.id} existingFeedback={pitch.mentorFeedback || ""} />
+                <div className="h-[300px]">
+                  <MentorMessageThread 
+                    pitchId={pitch.id} 
+                    messages={pitch.messages} 
+                    currentUserRole="MENTOR" 
+                    canReply={true} 
+                  />
+                </div>
+                
+                <MentorReviewForm pitchId={pitch.id} />
               </GlassCard>
             ))}
 

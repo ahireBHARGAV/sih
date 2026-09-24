@@ -1,7 +1,7 @@
 import { ClosedLoopDiagram } from "@/components/closed-loop-diagram";
 import { TopNav } from "@/components/ui/top-nav";
 import { GlassCard } from "@/components/ui/glass-card";
-import { ArrowRight, GraduationCap, Briefcase, Building2, Library, UserCheck } from "lucide-react";
+import { ArrowRight, GraduationCap, Briefcase, Library, UserCheck } from "lucide-react";
 import { loginAsRole } from "./actions";
 import { ScrollReveal } from "@/components/scroll-reveal";
 

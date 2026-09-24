@@ -25,7 +25,8 @@ export async function PATCH(
     const { mentorFeedback, approved } = body;
 
     const pitch = await prisma.pitch.findUnique({
-      where: { id: pitchId }
+      where: { id: pitchId },
+      include: { problem: true }
     });
 
     if (!pitch || pitch.mentorId !== mentor.id) {
@@ -37,12 +38,39 @@ export async function PATCH(
     }
 
     // Only mentor-approved work reaches industry.
+    if (approved) {
+      await prisma.studentSkill.upsert({
+        where: {
+          studentId_skillId: {
+            studentId: pitch.studentId,
+            skillId: pitch.problem.skillId
+          }
+        },
+        update: {
+          state: 'MENTOR_ENDORSED',
+          evidenceRef: pitch.id
+        },
+        create: {
+          studentId: pitch.studentId,
+          skillId: pitch.problem.skillId,
+          state: 'MENTOR_ENDORSED',
+          evidenceRef: pitch.id
+        }
+      });
+    }
+
     const updatedPitch = await prisma.pitch.update({
       where: { id: pitchId },
       data: {
-        mentorFeedback,
-        status: approved ? 'SUBMITTED_TO_INDUSTRY' : 'CONFIRMED', // If not approved, goes back to CONFIRMED (sandbox draft mode)
-        mentorApprovedAt: approved ? new Date() : null
+        status: approved ? 'SUBMITTED_TO_INDUSTRY' : 'DRAFT_WITH_MENTOR',
+        mentorApprovedAt: approved ? new Date() : null,
+        messages: mentorFeedback ? {
+          create: {
+            content: mentorFeedback,
+            senderId: userId,
+            senderRole: 'MENTOR'
+          }
+        } : undefined
       }
     });
 

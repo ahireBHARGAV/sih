@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useTransition } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { User, Award, CheckCircle, Circle, Plus, Loader2 } from "lucide-react";
+import { User, CheckCircle, Circle, Plus, Loader2 } from "lucide-react";
 
 interface SkillItem {
   skillId: string;
@@ -27,7 +27,7 @@ interface MetallicSkillCardProps {
 
 export function MetallicSkillCard({
   name,
-  level,
+
   targetRole,
   xp,
   skills,

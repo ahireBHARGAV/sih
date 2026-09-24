@@ -5,6 +5,7 @@ import { getSession } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { PitchConfirmButton } from "./pitch-confirm-button";
+import { getMentorsWithLoad } from "@/lib/mentor-load";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
@@ -28,7 +29,7 @@ export default async function ProblemPitchesPage({ params }: { params: { id: str
       reviewer: { include: { user: true } },
       pitches: {
         include: {
-          student: { include: { user: true } }
+          student: { include: { user: true, institution: true } }
         },
         orderBy: { createdAt: 'desc' }
       }
@@ -39,6 +40,8 @@ export default async function ProblemPitchesPage({ params }: { params: { id: str
 
   const pendingPitches = problem.pitches.filter(p => p.status === 'PITCHED');
   const activePitches = problem.pitches.filter(p => p.status !== 'PITCHED' && p.status !== 'REJECTED');
+
+  const mentors = await getMentorsWithLoad();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -64,7 +67,7 @@ export default async function ProblemPitchesPage({ params }: { params: { id: str
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-semibold text-ink-900">{pitch.student.user.name}</h3>
-                      <p className="text-xs text-ink-500">{pitch.student.institutionName}</p>
+                      <p className="text-xs text-ink-500">{pitch.student.institution?.name}</p>
                     </div>
                     <Badge variant={pitch.matchPercentage >= 80 ? 'verified' : 'secondary'} className="text-sm">
                       {pitch.matchPercentage}% Match
@@ -81,7 +84,11 @@ export default async function ProblemPitchesPage({ params }: { params: { id: str
                   </div>
 
                   <div className="flex justify-end mt-2">
-                    <PitchConfirmButton pitchId={pitch.id} />
+                    <PitchConfirmButton 
+                      pitchId={pitch.id} 
+                      defaultMentorId={problem.reviewerId}
+                      mentors={mentors.map(m => ({ id: m.id, user: { name: m.user.name }, tier: m.tier, activeMenteeCount: m.activeMenteeCount, maxActiveMentees: m.maxActiveMentees }))} 
+                    />
                   </div>
                 </GlassCard>
               ))}

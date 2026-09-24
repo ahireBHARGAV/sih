@@ -4,6 +4,7 @@ import { getSession } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { CreateProblemForm } from "./create-problem-form";
+import { getMentorsWithLoad } from "@/lib/mentor-load";
 
 export const dynamic = 'force-dynamic';
 
@@ -24,10 +25,7 @@ export default async function NewProblemPage() {
     orderBy: { name: 'asc' }
   });
 
-  const mentors = await prisma.mentorProfile.findMany({
-    where: { verified: true },
-    include: { user: true }
-  });
+  const mentors = await getMentorsWithLoad();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -46,7 +44,14 @@ export default async function NewProblemPage() {
         <GlassCard>
           <CreateProblemForm 
             skills={skills.map(s => ({ id: s.id, name: s.name }))} 
-            mentors={mentors.map(m => ({ id: m.id, user: { name: m.user.name }, tier: m.tier }))} 
+            mentors={mentors.map(m => ({ 
+              id: m.id, 
+              user: { name: m.user.name }, 
+              tier: m.tier, 
+              expertiseTags: m.expertiseTags,
+              activeMenteeCount: m.activeMenteeCount,
+              maxActiveMentees: m.maxActiveMentees
+            }))} 
           />
         </GlassCard>
       </main>

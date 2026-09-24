@@ -44,7 +44,8 @@ export default async function IndustryDashboard() {
       <TopNav role="Industry" items={[
         { label: "Dashboard", href: "/industry", isActive: true },
         { label: "Hiring", href: "/industry/hiring" },
-        { label: "Pipeline", href: "/industry/pipeline" }
+        { label: "Pipeline", href: "/industry/pipeline" },
+        { label: "Academics", href: "/industry/academics" }
       ]} />
       
       <main className="flex-1 container mx-auto max-w-6xl px-6 py-12">

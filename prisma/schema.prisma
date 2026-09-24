@@ -108,7 +108,8 @@ model StudentProfile {
   id              String   @id @default(cuid())
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id])
-  institutionName String
+  institutionId   String?
+  institution     InstitutionProfile? @relation(fields: [institutionId], references: [id])
   interests       String[]
   targetRole      String?
   xp              Int      @default(0)
@@ -141,7 +142,8 @@ model FacultyProfile {
   id              String   @id @default(cuid())
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id])
-  institutionName String
+  institutionId   String?
+  institution     InstitutionProfile? @relation(fields: [institutionId], references: [id])
   expertiseTags   String[]
 
   engagements FacultyEngagement[]
@@ -152,6 +154,9 @@ model InstitutionProfile {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id])
   name   String
+  students  StudentProfile[]
+  faculty   FacultyProfile[]
+  mentors   MentorProfile[]
 }
 
 model MentorProfile {
@@ -161,6 +166,10 @@ model MentorProfile {
   tier          String   
   verified      Boolean  @default(false)
   expertiseTags String[]
+  institutionId String?
+  maxActiveMentees Int   @default(5)
+  available     Boolean  @default(true)
+  institution   InstitutionProfile? @relation(fields: [institutionId], references: [id])
 
   problemsReviewing Problem[]
   pitchesMentoring  Pitch[]
@@ -262,7 +271,7 @@ model Pitch {
   mentorId         String?
   mentor           MentorProfile? @relation(fields: [mentorId], references: [id])
   draftContent     String?
-  mentorFeedback   String?
+  messages         MentorMessage[]
   mentorApprovedAt DateTime?
 
   industryScore    Int?
@@ -314,4 +323,14 @@ model FacultyEngagement {
   type       EngagementType
   title      String
   status     String         @default("OPEN")
+}
+
+model MentorMessage {
+  id         String   @id @default(cuid())
+  pitchId    String
+  pitch      Pitch    @relation(fields: [pitchId], references: [id])
+  senderId   String   // the User id of whoever sent it
+  senderRole String   // "STUDENT" | "MENTOR"
+  content    String
+  createdAt  DateTime @default(now())
 }

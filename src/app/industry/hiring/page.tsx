@@ -40,7 +40,8 @@ export default async function TalentDiscoveryPage({
       user: true,
       skills: {
         include: { skill: true }
-      }
+      },
+      institution: true
     }
   });
 
@@ -96,7 +97,7 @@ export default async function TalentDiscoveryPage({
                   <div className="flex justify-between items-start">
                     <div>
                       <h2 className="text-xl font-display font-semibold text-ink-900">{student.user.name}</h2>
-                      <p className="text-sm text-ink-600 mt-1">{student.institutionName || "Institution not specified"} • Level {student.level}</p>
+                      <p className="text-sm text-ink-600 mt-1">{student.institution?.name || "Institution not specified"} • Level {student.level}</p>
                     </div>
                     <Button variant="secondary" size="sm">Invite to Apply</Button>
                   </div>

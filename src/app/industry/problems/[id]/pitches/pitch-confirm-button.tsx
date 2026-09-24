@@ -4,9 +4,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
-export function PitchConfirmButton({ pitchId }: { pitchId: string }) {
+export function PitchConfirmButton({ 
+  pitchId, 
+  defaultMentorId, 
+  mentors 
+}: { 
+  pitchId: string,
+  defaultMentorId: string,
+  mentors: { id: string, user: { name: string }, tier: string, activeMenteeCount: number, maxActiveMentees: number }[] 
+}) {
   const router = useRouter();
   const [isConfirming, setIsConfirming] = useState(false);
+  const [selectedMentorId, setSelectedMentorId] = useState(defaultMentorId);
+
+  const sortedMentors = [...mentors].sort((a, b) => a.activeMenteeCount - b.activeMenteeCount);
 
   const handleConfirm = async () => {
     setIsConfirming(true);
@@ -14,6 +25,8 @@ export function PitchConfirmButton({ pitchId }: { pitchId: string }) {
     try {
       const res = await fetch(`/api/pitches/${pitchId}/confirm`, {
         method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mentorId: selectedMentorId })
       });
 
       if (res.ok) {
@@ -30,8 +43,24 @@ export function PitchConfirmButton({ pitchId }: { pitchId: string }) {
   };
 
   return (
-    <Button size="sm" onClick={handleConfirm} disabled={isConfirming}>
-      {isConfirming ? "Confirming..." : "Confirm & Assign Mentor"}
-    </Button>
+    <div className="flex gap-2 items-center">
+      <select 
+        value={selectedMentorId}
+        onChange={e => setSelectedMentorId(e.target.value)}
+        className="h-9 rounded-md border border-input bg-background px-3 py-1 text-xs outline-none"
+      >
+        {sortedMentors.map(m => {
+          const atCapacity = m.activeMenteeCount >= m.maxActiveMentees;
+          return (
+            <option key={m.id} value={m.id}>
+              {m.user.name} ({m.tier}) {atCapacity ? " - ⚠️ At capacity" : ` - Load: ${m.activeMenteeCount}/${m.maxActiveMentees}`}
+            </option>
+          );
+        })}
+      </select>
+      <Button size="sm" onClick={handleConfirm} disabled={isConfirming}>
+        {isConfirming ? "Confirming..." : "Confirm & Assign"}
+      </Button>
+    </div>
   );
 }

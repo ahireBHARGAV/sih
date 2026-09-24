@@ -31,12 +31,15 @@ export async function PATCH(
       return NextResponse.json({ error: 'Pitch not found or unauthorized' }, { status: 404 });
     }
 
+    const body = await request.json().catch(() => ({}));
+    const mentorIdToAssign = body.mentorId || pitch.problem.reviewerId;
+
     // Confirm pitch and assign the mentor (reviewer) from the problem
     const updatedPitch = await prisma.pitch.update({
       where: { id: pitchId },
       data: {
         status: 'CONFIRMED',
-        mentorId: pitch.problem.reviewerId
+        mentorId: mentorIdToAssign
       }
     });
 

@@ -69,13 +69,14 @@ export default async function CertificatePage({ params }: { params: { id: string
 
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-glass-border">
           <div className="text-center">
-            <p className="text-sm text-ink-600 uppercase tracking-wider font-semibold mb-1">Industry Score</p>
-            <p className="text-3xl font-display font-bold text-ink-900">{pitch.industryScore}<span className="text-lg text-ink-400">/100</span></p>
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-ink-600 uppercase tracking-wider font-semibold mb-1">Endorsed By</p>
+            <p className="text-sm text-ink-600 uppercase tracking-wider font-semibold mb-1">Mentor-endorsed by</p>
             <p className="text-lg font-semibold text-ink-900">{mentor?.user.name}</p>
             <p className="text-xs text-ink-600">{mentor?.tier} Mentor</p>
+          </div>
+          <div className="text-center">
+            <p className="text-sm text-ink-600 uppercase tracking-wider font-semibold mb-1">Industry-verified by</p>
+            <p className="text-lg font-semibold text-ink-900">{problem.industry.companyName}</p>
+            <p className="text-xs text-ink-600">Score: {pitch.industryScore}/100</p>
           </div>
           <div className="text-center">
             <p className="text-sm text-ink-600 uppercase tracking-wider font-semibold mb-1">Issue Date</p>

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { PitchScoreForm } from "./pitch-score-form";
+import { MentorMessageThread } from "@/components/mentor-message-thread";
 
 export const dynamic = 'force-dynamic';
 
@@ -30,7 +31,8 @@ export default async function ProblemScorePage({ params }: { params: { id: strin
         },
         include: {
           student: { include: { user: true } },
-          mentor: { include: { user: true } }
+          mentor: { include: { user: true } },
+          messages: { orderBy: { createdAt: 'asc' } }
         },
         orderBy: { updatedAt: 'desc' }
       }
@@ -76,9 +78,21 @@ export default async function ProblemScorePage({ params }: { params: { id: strin
                     <pre className="text-sm text-ink-700 whitespace-pre-wrap font-mono">{pitch.draftContent}</pre>
                   </div>
 
-                  <div className="bg-gold/10 p-3 rounded-md border border-gold/20 text-sm text-ink-800">
-                    <span className="font-semibold block mb-1">Mentor Endorsement:</span>
-                    {pitch.mentorFeedback}
+                  <div className="bg-gold/10 p-3 rounded-md border border-gold/20 text-sm text-ink-800 relative">
+                    <span className="font-semibold block mb-2">Mentor Endorsement Thread ({pitch.mentor?.user.name}):</span>
+                    <div className="h-64">
+                      <MentorMessageThread 
+                        pitchId={pitch.id} 
+                        messages={pitch.messages} 
+                        currentUserRole="MENTOR" 
+                        canReply={false} 
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-white/60 p-3 rounded-md border border-glass-border">
+                    <span className="font-semibold block mb-1 text-sm text-ink-900">Evaluation Rubric:</span>
+                    <p className="text-sm text-ink-700">{problem.rubric}</p>
                   </div>
 
                   <div className="pt-4 border-t border-glass-border">

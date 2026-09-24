@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { PitchDraftEditor } from "./pitch-draft-editor";
 import { MintCertificateButton } from "./mint-certificate-button";
+import { MentorMessageThread } from "@/components/mentor-message-thread";
 import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
@@ -26,7 +27,8 @@ export default async function PitchSandboxPage({ params }: { params: { id: strin
     where: { id: params.id, studentId: student.id },
     include: {
       problem: { include: { industry: true } },
-      mentor: { include: { user: true } }
+      mentor: { include: { user: true } },
+      messages: { orderBy: { createdAt: 'asc' } }
     }
   });
 
@@ -116,15 +118,34 @@ export default async function PitchSandboxPage({ params }: { params: { id: strin
               {!pitch.mentor ? (
                 <p className="text-sm text-ink-500 italic">No mentor assigned yet.</p>
               ) : (
-                <div className="space-y-3">
-                  <p className="text-sm text-ink-700"><span className="font-medium">Mentor:</span> {pitch.mentor.user.name}</p>
-                  {pitch.mentorFeedback ? (
-                    <div className="bg-gold/10 p-3 rounded-md border border-gold/20 text-sm text-ink-800">
-                      {pitch.mentorFeedback}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 bg-white/40 p-3 rounded-lg border border-glass-border">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                      {pitch.mentor.user.name.charAt(0)}
                     </div>
-                  ) : (
-                    <p className="text-sm text-ink-500 italic">No feedback provided yet. Submit a draft to get started.</p>
-                  )}
+                    <div>
+                      <p className="text-sm font-semibold text-ink-900">{pitch.mentor.user.name}</p>
+                      <div className="flex gap-1 mt-1 flex-wrap">
+                        {pitch.mentor.expertiseTags.map((tag: string) => (
+                          <Badge key={tag} variant="secondary" className="text-[10px] px-1.5 py-0">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-glass-border">
+                    <h4 className="text-xs font-semibold text-ink-500 uppercase tracking-wider mb-3">Feedback Thread</h4>
+                    <div className="h-[400px]">
+                      <MentorMessageThread 
+                        pitchId={pitch.id} 
+                        messages={pitch.messages} 
+                        currentUserRole="STUDENT" 
+                        canReply={pitch.status === 'DRAFT_WITH_MENTOR'} 
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </GlassCard>

@@ -10,6 +10,8 @@ import Link from "next/link";
 interface PitchData {
   id: string;
   status: string;
+  mentorApprovedAt?: Date | null;
+  mentor?: { user: { name: string } } | null;
   problem: {
     title: string;
     skillId: string;
@@ -22,6 +24,7 @@ interface SkillRoadmapCardProps {
     id: string;
     name: string;
     state: string; 
+    evidenceRef?: string;
   };
   pitches: PitchData[];
 }
@@ -38,6 +41,9 @@ export function SkillRoadmapCard({ skill, pitches }: SkillRoadmapCardProps) {
   if (effectiveState === "INDUSTRY_VERIFIED" || effectiveState === "VERIFIED") progress = 100;
   else if (effectiveState === "MENTOR_ENDORSED") progress = 66;
   else if (effectiveState === "UNVERIFIED") progress = 0; 
+
+  const evidencePitch = skill.evidenceRef ? pitches.find(p => p.id === skill.evidenceRef) : null;
+  const mentorInfo = evidencePitch?.mentor ? `Endorsed by ${evidencePitch.mentor.user.name}${evidencePitch.mentorApprovedAt ? ` on ${new Date(evidencePitch.mentorApprovedAt).toLocaleDateString()}` : ''}` : ""; 
 
   // Mock certifications/courses
   const mockCourses = [
@@ -62,7 +68,10 @@ export function SkillRoadmapCard({ skill, pitches }: SkillRoadmapCardProps) {
                 {skill.name}
               </h3>
               {progress === 100 && (
-                <Badge variant="industryVerified" className="text-[10px]">Verified</Badge>
+                <Badge variant="industryVerified" className="text-[10px]" title={mentorInfo ? `${mentorInfo} | Industry Verified` : "Industry Verified"}>Verified</Badge>
+              )}
+              {progress === 66 && (
+                <Badge variant="mentorEndorsed" className="text-[10px]" title={mentorInfo}>Mentor Endorsed</Badge>
               )}
             </div>
             <div className="flex items-center gap-2">

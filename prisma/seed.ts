@@ -60,6 +60,30 @@ async function main() {
     { name: 'Rohan Verma', email: 'rohan@student.com', role: UserRole.STUDENT, institutionName: 'IIT Delhi', xp: 120, level: 'Explorer', skills: ['Java', 'Spring Boot'] },
   ]
 
+  // Create Institutions First
+  const institutionsData = [
+    { name: 'IIT Bombay', email: 'admin@iitb.ac.in' },
+    { name: 'BITS Pilani', email: 'admin@bits.ac.in' },
+    { name: 'AIIA New Delhi', email: 'admin@aiia.ac.in' },
+    { name: 'NID Ahmedabad', email: 'admin@nid.ac.in' },
+    { name: 'IIT Delhi', email: 'admin@iitd.ac.in' },
+    { name: 'IISc Bangalore', email: 'admin@iisc.ac.in' },
+  ];
+  
+  const instMap: Record<string, string> = {};
+  for (const inst of institutionsData) {
+    const user = await prisma.user.create({
+      data: {
+        name: inst.name + ' Admin',
+        email: inst.email,
+        role: UserRole.INSTITUTION,
+        institutionProfile: { create: { name: inst.name } }
+      },
+      include: { institutionProfile: true }
+    });
+    instMap[inst.name] = user.institutionProfile!.id;
+  }
+
   for (const s of studentsData) {
     const user = await prisma.user.create({
       data: {
@@ -68,7 +92,7 @@ async function main() {
         role: s.role,
         studentProfile: {
           create: {
-            institutionName: s.institutionName,
+            institutionId: instMap[s.institutionName],
             interests: s.skills,
             xp: s.xp,
             level: s.level,
@@ -138,14 +162,7 @@ async function main() {
   await prisma.user.create({
     data: {
       name: 'Prof. Anjali Desai', email: 'anjali@academic.com', role: UserRole.ACADEMICIAN,
-      facultyProfile: { create: { institutionName: 'IISc Bangalore', expertiseTags: ['Research', 'Physics'] } }
-    }
-  })
-
-  await prisma.user.create({
-    data: {
-      name: 'IIT Bombay Admin', email: 'admin@iitb.ac.in', role: UserRole.INSTITUTION,
-      institutionProfile: { create: { name: 'IIT Bombay' } }
+      facultyProfile: { create: { institutionId: instMap['IISc Bangalore'], expertiseTags: ['Research', 'Physics'] } }
     }
   })
 

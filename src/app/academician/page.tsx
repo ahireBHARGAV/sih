@@ -5,6 +5,7 @@ import { getSession } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ApplyEngagementButton } from "./apply-engagement-button";
+import { BecomeMentorButton } from "./become-mentor-button";
 import { EngagementType } from "@prisma/client";
 
 // Hardcoded available engagements for the MVP demo
@@ -44,11 +45,16 @@ export default async function AcademicianPage() {
     where: { userId },
     include: {
       user: true,
-      engagements: true
+      engagements: true,
+      institution: true
     }
   });
 
   if (!faculty) redirect("/");
+
+  const mentorProfile = await prisma.mentorProfile.findUnique({
+    where: { userId }
+  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -63,13 +69,24 @@ export default async function AcademicianPage() {
           <div className="w-full md:w-1/3 space-y-6">
             <GlassCard>
               <h2 className="text-2xl font-display font-bold text-ink-900 mb-1">{faculty.user.name}</h2>
-              <p className="text-ink-600 mb-4">{faculty.institutionName}</p>
+              <p className="text-ink-600 mb-4">{faculty.institution?.name}</p>
               <div className="flex flex-wrap gap-2 mb-6">
                 {faculty.expertiseTags.map(tag => (
                   <Badge key={tag} variant="mentorEndorsed" className="bg-white/50">{tag}</Badge>
                 ))}
               </div>
-              
+              <h3 className="font-semibold text-ink-900 mb-4 border-t border-glass-border pt-4">Mentoring</h3>
+              {mentorProfile ? (
+                <div className="p-3 bg-emerald-50 text-emerald-900 rounded-lg border border-emerald-200 text-sm mb-6">
+                  You are registered as an Institution Mentor. You can now review and endorse student submissions from your institution.
+                </div>
+              ) : (
+                <div className="mb-6">
+                  <p className="text-sm text-ink-600 mb-2">Connect with the industry proof-of-work loop by mentoring your institution&apos;s students.</p>
+                  <BecomeMentorButton />
+                </div>
+              )}
+
               <h3 className="font-semibold text-ink-900 mb-4 border-t border-glass-border pt-4">My Active Engagements</h3>
               {faculty.engagements.length === 0 ? (
                 <p className="text-sm text-ink-600 italic">No active engagements yet.</p>
