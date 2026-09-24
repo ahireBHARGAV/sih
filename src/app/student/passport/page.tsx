@@ -43,10 +43,8 @@ export default async function PassportPage() {
     state: s.state
   }));
 
-  // Group skills by category for better display
   const skillsByCategory: Record<string, typeof student.skills> = {
     TECH: [],
-    AYUSH_ALLIED: [],
     SOFT_SKILL: []
   };
 
