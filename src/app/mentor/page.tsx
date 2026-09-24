@@ -15,8 +15,7 @@ export default async function MentorDashboard() {
     <div className="min-h-screen flex flex-col">
       <TopNav role="Mentor" items={[
         { label: "Dashboard", href: "/mentor", isActive: true },
-        { label: "Sandbox", href: "/mentor/sandbox" },
-        { label: "Academics", href: "/mentor/academics" }
+        { label: "Sandbox", href: "/mentor/sandbox" }
       ]} />
       
       <main className="flex-1 container mx-auto max-w-[1440px] px-6 py-12">

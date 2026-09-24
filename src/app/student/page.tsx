@@ -58,7 +58,6 @@ export default async function StudentDashboard() {
         { label: "Problem Statements", href: "/student/problems" },
         { label: "Opportunities", href: "/student/opportunities" },
         { label: "Applications", href: "/student/applications" },
-        { label: "Academics", href: "/student/academics" },
       ]} />
       
       <main className="flex-1 container mx-auto max-w-[1440px] px-6 py-12">

@@ -36,7 +36,6 @@ export default async function StudentApplicationsPage() {
         { label: "Problem Statements", href: "/student/problems" },
         { label: "Opportunities", href: "/student/opportunities" },
         { label: "Applications", href: "/student/applications", isActive: true },
-        { label: "Academics", href: "/student/academics" },
       ]} />
       
       <main className="flex-1 container mx-auto max-w-4xl px-6 py-12">
