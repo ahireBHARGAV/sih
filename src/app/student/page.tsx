@@ -4,7 +4,6 @@ import { getSession } from "@/app/actions";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { computeMatch } from "@/lib/gap-analysis";
 import { MetallicSkillCard } from "@/components/ui/metallic-skill-card";
 
 export const dynamic = 'force-dynamic';
@@ -27,20 +26,6 @@ export default async function StudentDashboard() {
 
   if (!student) redirect("/");
 
-  // Calculate gap count conceptually
-  let gapCount = 0;
-  if (student.targetRole) {
-    const requirements = await prisma.industryRequirement.findMany({
-      where: { roleTitle: { contains: student.targetRole, mode: 'insensitive' } },
-      select: { skillId: true },
-      distinct: ['skillId']
-    });
-
-    const requiredSkillIds = requirements.map(r => r.skillId);
-    const matchData = computeMatch(requiredSkillIds, student.skills);
-    gapCount = matchData.missing.length + matchData.developing;
-  }
-
   const skillsData = student.skills.map(s => ({
     skillId: s.skillId,
     name: s.skill.name,
@@ -62,7 +47,7 @@ export default async function StudentDashboard() {
       
       <main className="flex-1 container mx-auto max-w-[1440px] px-6 py-12">
         <h1 className="text-3xl font-display font-bold text-ink-900 mb-2">Welcome back, {student.user.name.split(' ')[0]}</h1>
-        <p className="text-ink-600 mb-8">Here is your progress towards becoming a {student.targetRole || "Verified Professional"}.</p>
+        <p className="text-ink-600 mb-8">Here is your current progress and activity.</p>
         
         <MetallicSkillCard 
           name={student.user.name}
@@ -75,14 +60,11 @@ export default async function StudentDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 mt-8">
 
           <GlassCard className="flex flex-col gap-2">
-            <span className="text-ink-600 text-sm font-semibold uppercase tracking-wider">Skill Gap</span>
+            <span className="text-ink-600 text-sm font-semibold uppercase tracking-wider">Employability Score</span>
             <div className="flex items-end gap-3">
-              <h2 className="text-4xl font-display font-bold text-ink-900">{gapCount}</h2>
-              <span className="text-ink-400 font-medium mb-1">skills missing</span>
+              <h2 className="text-4xl font-display font-bold text-ink-900">{student.employabilityScore}</h2>
+              <span className="text-ink-400 font-medium mb-1">/ 1000</span>
             </div>
-            {gapCount > 0 && (
-              <Link href="/student/roadmap" className="mt-2 text-sm text-primary hover:underline">View Roadmap</Link>
-            )}
           </GlassCard>
 
           <GlassCard className="flex flex-col gap-2">

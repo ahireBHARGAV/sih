@@ -112,7 +112,7 @@ export function MetallicSkillCard({
               <div>
                 <h3 className="text-3xl font-display font-bold tracking-tight text-zinc-900 drop-shadow-sm">{name}</h3>
                 <p className="text-sm font-semibold text-zinc-600 tracking-wide uppercase">
-                  {targetRole || "Verified Professional"}
+                  {targetRole || "Student"}
                 </p>
               </div>
             </div>
