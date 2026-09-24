@@ -33,7 +33,6 @@ export default async function StudentApplicationsPage() {
         { label: "Dashboard", href: "/student" },
         { label: "Assessment", href: "/student/assessment" },
         { label: "Skill Passport", href: "/student/passport" },
-        { label: "Roadmap", href: "/student/roadmap" },
         { label: "Problem Statements", href: "/student/problems" },
         { label: "Opportunities", href: "/student/opportunities" },
         { label: "Applications", href: "/student/applications", isActive: true },

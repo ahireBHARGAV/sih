@@ -55,7 +55,6 @@ export default async function StudentDashboard() {
         { label: "Dashboard", href: "/student", isActive: true },
         { label: "Assessment", href: "/student/assessment" },
         { label: "Skill Passport", href: "/student/passport" },
-        { label: "Roadmap", href: "/student/roadmap" },
         { label: "Problem Statements", href: "/student/problems" },
         { label: "Opportunities", href: "/student/opportunities" },
         { label: "Applications", href: "/student/applications" },
