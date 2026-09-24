@@ -20,7 +20,6 @@ export default async function LandingPage() {
     { title: "Student", roleId: "STUDENT", icon: <GraduationCap className="w-5 h-5" />, desc: "Build a verified skill passport." },
     { title: "Industry", roleId: "INDUSTRY", icon: <Briefcase className="w-5 h-5" />, desc: "Discover talent & define demand." },
     { title: "Institution", roleId: "INSTITUTION", icon: <Library className="w-5 h-5" />, desc: "Track placement & faculty." },
-    { title: "Academician", roleId: "ACADEMICIAN", icon: <Building2 className="w-5 h-5" />, desc: "Engage in FDPs & consultancy." },
     { title: "Mentor", roleId: "MENTOR", icon: <UserCheck className="w-5 h-5" />, desc: "Evaluate student proof-of-work." },
   ];
 
