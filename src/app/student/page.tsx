@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { MetallicSkillCard } from "@/components/ui/metallic-skill-card";
+import { removeSkill } from "./actions";
 
 export const dynamic = 'force-dynamic';
 
@@ -55,6 +56,7 @@ export default async function StudentDashboard() {
           targetRole={student.targetRole}
           xp={student.xp}
           skills={skillsData}
+          onRemoveSkill={removeSkill}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 mt-8">

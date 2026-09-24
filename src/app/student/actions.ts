@@ -41,3 +41,30 @@ export async function addMentionedSkill(skillId: string) {
   revalidatePath("/student");
   revalidatePath("/student/passport");
 }
+
+export async function removeSkill(skillId: string) {
+  const { role, userId } = await getSession();
+  if (role !== "STUDENT" || !userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const student = await prisma.studentProfile.findUnique({
+    where: { userId },
+  });
+
+  if (!student) {
+    throw new Error("Student not found");
+  }
+
+  await prisma.studentSkill.delete({
+    where: {
+      studentId_skillId: {
+        studentId: student.id,
+        skillId: skillId,
+      },
+    },
+  });
+
+  revalidatePath("/student");
+  revalidatePath("/student/passport");
+}

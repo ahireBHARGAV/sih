@@ -23,6 +23,7 @@ interface MetallicSkillCardProps {
   skills: SkillItem[];
   availableSkills?: AvailableSkill[];
   onAddSkill?: (skillId: string) => Promise<void>;
+  onRemoveSkill?: (skillId: string) => Promise<void>;
 }
 
 export function MetallicSkillCard({
@@ -33,6 +34,7 @@ export function MetallicSkillCard({
   skills,
   availableSkills,
   onAddSkill,
+  onRemoveSkill,
 }: MetallicSkillCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
@@ -141,6 +143,21 @@ export function MetallicSkillCard({
                     <Circle className="w-3.5 h-3.5 opacity-40 text-zinc-500" />
                   )}
                   {skill.name}
+                  {onRemoveSkill && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startTransition(async () => {
+                          await onRemoveSkill(skill.skillId);
+                        });
+                      }}
+                      className="ml-1 opacity-50 hover:opacity-100 hover:text-red-500 transition-colors"
+                      title="Remove skill"
+                      disabled={isPending}
+                    >
+                      ×
+                    </button>
+                  )}
                 </div>
               )) : (
                 <div className="text-sm font-medium text-zinc-500 italic">No skills added yet.</div>

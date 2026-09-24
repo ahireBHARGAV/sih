@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { MetallicSkillCard } from "@/components/ui/metallic-skill-card";
 import { SkillRoadmapCard } from "@/components/ui/skill-roadmap-card";
-import { addMentionedSkill } from "../actions";
+import { addMentionedSkill, removeSkill } from "../actions";
 
 export const dynamic = 'force-dynamic';
 
@@ -84,6 +84,7 @@ export default async function PassportPage() {
             skills={skillsData}
             availableSkills={availableSkills}
             onAddSkill={addMentionedSkill}
+            onRemoveSkill={removeSkill}
           />
         </div>
 
