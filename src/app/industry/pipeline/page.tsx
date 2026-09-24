@@ -24,7 +24,7 @@ export default async function IndustryPipelinePage() {
       stage: { not: "COMPLETED" } // hide completed for now
     },
     include: {
-      student: { include: { user: true } },
+      student: { include: { user: true, institution: true } },
       opportunity: true
     },
     orderBy: { appliedAt: 'desc' }
