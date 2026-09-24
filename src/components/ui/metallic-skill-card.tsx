@@ -120,9 +120,6 @@ export function MetallicSkillCard({
               <div className="text-4xl font-display font-black text-zinc-800 flex items-center justify-end gap-1">
                 {xp} <span className="text-base font-semibold text-zinc-600">XP</span>
               </div>
-              <div className="text-sm font-bold text-amber-600 tracking-wider flex items-center gap-1 justify-end">
-                <Award className="w-4 h-4" /> {level}
-              </div>
             </div>
           </div>
 

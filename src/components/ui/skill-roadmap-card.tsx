@@ -102,8 +102,9 @@ export function SkillRoadmapCard({ skill, pitches }: SkillRoadmapCardProps) {
               {completedPitches.length > 0 || isDemoVerified ? (
                 <div className="flex flex-col gap-2">
                   {completedPitches.map(pitch => (
-                    <div key={pitch.id} className="bg-white/40 border border-glass-border rounded-lg p-3 text-sm">
-                      <div className="font-medium text-ink-900">{pitch.problem.title}</div>
+                    <div key={pitch.id} className="bg-white/40 border border-glass-border rounded-lg p-3 text-sm relative">
+                      <div className="font-medium text-ink-900 pr-16">{pitch.problem.title}</div>
+                      <div className="absolute top-3 right-3 text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">+150 XP</div>
                       <div className="text-ink-600 text-xs mt-1">Provided by: <span className="font-semibold">{pitch.problem.industry.companyName}</span></div>
                       <div className="mt-2 flex items-center gap-1 text-emerald-600 text-xs font-medium">
                         <CheckCircle2 className="w-3 h-3" /> Proof of Completion Verified
@@ -111,8 +112,9 @@ export function SkillRoadmapCard({ skill, pitches }: SkillRoadmapCardProps) {
                     </div>
                   ))}
                   {isDemoVerified && completedPitches.length === 0 && (
-                    <div className="bg-white/40 border border-glass-border rounded-lg p-3 text-sm">
-                      <div className="font-medium text-ink-900">Build a Scalable {skill.name} Architecture</div>
+                    <div className="bg-white/40 border border-glass-border rounded-lg p-3 text-sm relative">
+                      <div className="font-medium text-ink-900 pr-16">Build a Scalable {skill.name} Architecture</div>
+                      <div className="absolute top-3 right-3 text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">+150 XP</div>
                       <div className="text-ink-600 text-xs mt-1">Provided by: <span className="font-semibold">TechNova Solutions</span></div>
                       <div className="mt-2 flex items-center gap-1 text-emerald-600 text-xs font-medium">
                         <CheckCircle2 className="w-3 h-3" /> Proof of Completion Verified
