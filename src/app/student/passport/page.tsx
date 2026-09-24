@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { VerificationState } from "@prisma/client";
 import Link from "next/link";
 import { MetallicSkillCard } from "@/components/ui/metallic-skill-card";
+import { SkillRoadmapCard } from "@/components/ui/skill-roadmap-card";
 import { addMentionedSkill } from "../actions";
 
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,9 @@ export default async function PassportPage() {
         include: { skill: true },
         orderBy: { updatedAt: 'desc' }
       },
+      pitches: {
+        include: { problem: { include: { industry: true } } }
+      }
     }
   });
 
@@ -70,7 +74,6 @@ export default async function PassportPage() {
         { label: "Dashboard", href: "/student" },
         { label: "Assessment", href: "/student/assessment" },
         { label: "Skill Passport", href: "/student/passport", isActive: true },
-        { label: "Roadmap", href: "/student/roadmap" },
         { label: "Problem Statements", href: "/student/problems" },
         { label: "Opportunities", href: "/student/opportunities" },
         { label: "Applications", href: "/student/applications" },
@@ -107,28 +110,11 @@ export default async function PassportPage() {
               ) : (
                 <div className="flex flex-col gap-3">
                   {skills.map(s => (
-                    <div key={s.id} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Badge variant={getBadgeVariant(s.state)}>
-                          {s.state === "UNVERIFIED" ? "Mentioned: " : ""}{s.skill.name}
-                          {s.state === "INDUSTRY_VERIFIED" && (
-                            <svg className="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          )}
-                        </Badge>
-                        {s.state === "UNVERIFIED" && (
-                          <Link href={`/student/problems?skillId=${s.skillId}`} className="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full hover:bg-orange-200 transition-colors font-medium">
-                            Verify
-                          </Link>
-                        )}
-                      </div>
-                      {s.evidenceRef && (
-                        <Link href={`/verify/${s.evidenceRef}`} className="text-[10px] text-teal hover:underline ml-2">
-                          View Evidence
-                        </Link>
-                      )}
-                    </div>
+                    <SkillRoadmapCard 
+                      key={s.id}
+                      skill={{ id: s.skill.id, name: s.skill.name, state: s.state }}
+                      pitches={student.pitches}
+                    />
                   ))}
                 </div>
               )}
